@@ -1,0 +1,74 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+$(document).ready(function(){
+$("button").click(function(){
+      google.load("visualization", "1", {packages:["corechart"]});
+    function drawGeoGDPDist() {
+    try{
+        var request = new XMLHttpRequest();
+        request.open("GET", "sampleData_4.json", false);
+        request.send(null);
+        var servers = JSON.parse(request.responseText);
+        var xHeader=[];
+        var xName=servers.fields[0].label;
+        var yName="In Lakh Rupees";
+        var no_xElements=0;
+        for(var i=0; i<servers.fields.length; i++){
+            xHeader.push(servers.fields[i].label.split("\n")[0]);
+            no_xElements++;
+        }
+        
+        var res = '';
+        var op = new Array(servers.data.length);
+        for(var i = 0; i < servers.data.length; i++){
+            op[i] = new Array(3);
+            for(var j = 0; j < 3; j++){
+                if(i===0){
+                    op[i][j] = xHeader[j];
+                   
+                }
+                else{
+                    if(j===0){
+                        op[i][j] = servers.data[i][j];
+                    }
+                    else{
+                        op[i][j] = parseFloat(servers.data[i][j]);
+                    }
+                    //op[i].push(servers.data[i][j+1]);
+                }
+                res = res + "  " +op[i][j];
+            }
+            res = res+"</br>";
+        }
+       //document.getElementById("para").innerHTML=res;
+       
+       var data = google.visualization.arrayToDataTable(op);        
+        //var data = google.visualization.arrayToDataTable(servers.data);        
+       
+        var options = {
+        title: 'GDP of States MP',
+        region: 'IN',
+        displayMode: 'markers',
+        resolution:'provinces',
+        colorAxis: {colors: ['yellow', 'blue']}
+      };
+
+      var chart = new google.visualization.GeoChart(document.getElementById('container'));
+      chart.draw(data, options);
+  }
+      catch(err){
+          alert(err.message);
+      }
+    }
+});
+});
+    </script>
+  </head>
+
+  <body>
+    <button type="button" onClick = "drawGeoGDPDist();">GeoMapofMP</button>
+    <div id="container" style="width: 100%; height: 100%;"></div>
+  </body>
+</html>

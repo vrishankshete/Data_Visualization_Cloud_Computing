@@ -1,0 +1,31 @@
+{
+"fields":
+[
+ {"id":"a","label":"States","type":"string"},
+ {"id":"b","label":"Daily (In Percent)","type":"string"},
+ {"id":"c","label":"Sometimes in a week (In Percent)","type":"string"},
+ {"id":"d","label":"Sometimes in a Month\/Year (In Percent)","type":"string"},
+ {"id":"e","label":"Never (In Percent)","type":"string"}
+],
+"data":
+[
+ ["States", "Daily", "week"],
+ ["Andhra Pradesh",16.43,81.59],
+ ["Arunachal Pradesh",99.37,24.00],
+ ["Bihar",40,59.75],
+ ["Haryana",49.25,50.75],
+ ["Himachal Pradesh",62.69,37.31],
+ ["Jammu & Kashmir",1,99],
+ ["Jharkhand",36.63,58.42],
+ ["Karnataka",53.36,44.52],
+ ["Kerala",50.62,46.91],
+ ["Madhya Pradesh",77.5,22],
+ ["Maharashtra",66.3,33.7],
+ ["Meghalaya",100,0],
+ ["Punjab",37.5,62],
+ ["Rajasthan",97.44,2.05],
+ ["Tamil Nadu",36.79,57.53],
+ ["Uttar Pradesh",75.64,23.85],
+ ["West Bengal",89.61,9.96]
+]
+}

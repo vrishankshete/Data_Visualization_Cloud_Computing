@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+
+$(document).ready(function(){
+$("button").click(function(){
+      google.load("visualization", "1", {packages:["corechart"]});
+   
+    function drawGeoGDP() {
+        var request = new XMLHttpRequest();
+        request.open("GET", "sampleData_5.json", false);
+        request.send(null);
+        var servers = JSON.parse(request.responseText);
+       
+       var data = google.visualization.arrayToDataTable(servers.data);  
+
+      var options = {
+        title: 'StateWise Vegetable consumption in India',
+        region: 'IN',
+        displayMode: 'regions',
+        resolution:'provinces',
+        colorAxis: {colors: ['yellow', 'blue']}
+      };
+
+      var chart = new google.visualization.GeoChart(document.getElementById('container'));
+      chart.draw(data, options);
+    };
+});
+});
+    </script>
+  </head>
+
+  <body>
+    <button type="button" onClick = "drawGeoGDP();">GeoMap</button>
+    <div id="container" style="width: 100%; height: 100%;"></div>
+  </body>
+</html>

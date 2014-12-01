@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<!--[if lt IE 8 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 8)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+
+   <!--- Basic Page Needs
+   ================================================== -->
+	<meta charset="utf-8">
+	
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+   <!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+   ================================================== -->
+   <link rel="stylesheet" href="css/base.css">
+	<link rel="stylesheet" href="css/layout.css">
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+   <!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="favicon.ico" >
+		<title>Data Visualization</title>
+
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<style type="text/css">
+#container {
+	height: 400px; 
+	
+}
+#container, #sliders {
+	min-width: 310px; 
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+		</style>
+
+<!-- ===================scripts  for various  charts  begin================================================= -->
+	
+<!-- ===================scatter  chart  begin================================================= -->
+	<script type="text/javascript">
+		  $(document).ready(function(){
+$("img.ScatterImg").click(function(){
+
+document.getElementById("sliders").style.display = "none";
+
+		var options1 = {
+        chart: {
+            renderTo: 'container',
+            margin: 100,
+            type: 'scatter',
+            options3d: {
+                enabled: true,
+                alpha: 20,
+                beta: 10,
+                depth: 250,
+                viewDistance: 5,
+
+                frame: {
+                    bottom: { size: 1, color: 'rgba(0,0,0,0.02)' },
+                    back: { size: 1, color: 'rgba(0,0,0,0.04)' },
+                    side: { size: 1, color: 'rgba(0,0,0,0.06)' }
+                }
+            }
+        },
+        title: {
+            text: 'Vegetables Intake of India (x=Daily, y=Weekly, z=Monthly)'
+        },
+        subtitle: {
+            text: 'Click and drag the plot area to rotate in space'
+        },
+        plotOptions: {
+            scatter: {
+                width: 20,
+                height: 20,
+                depth: 20
+            }
+        },
+        yAxis: {
+            min: 0,
+            max: 100,
+            title: "Weekly"
+        },
+        xAxis: {
+            min: 0.0,
+            max: 100.00,
+            gridLineWidth: 1,
+            title: "Daily"
+        },
+        zAxis: {
+            min: 0.0,
+            max: 100.00,
+            title: "Monthly"
+        },
+        legend: {
+            enabled: true
+        },
+        series: []
+        // series: [{name:'',colorByPoint: true, data: [[]]}, {name:'',colorByPoint: true, data: [[]]}, {name:'',colorByPoint: true, data: [[]]}]
+    };
+    
+  
+		
+$.get('sample_2.csv', function(data) {
+
+
+	try{
+	 var lines = data.toString().split('\n');
+	 //alert(lines.toString());
+	 }
+	 catch(err){
+	 alert(err.message);
+	 }
+
+    try{
+    
+    
+    $.each(lines, function(lineNo, line) { 
+        var items = line.split(',');     
+        if (lineNo === 0) {
+           /*$.each(items, function(itemNo, item) {
+                if (itemNo > 0) options1.xAxis.categories.push(item);
+            });*/
+        }
+        else {
+           var arr_series = {name:'',colorByPoint: true, data: [[]]};
+            $.each(items, function(itemNo, item) {
+                if (itemNo === 0) {
+                    arr_series.name=item;
+                    arr_series.colorByPoint=true;
+                } else if(itemNo <= 3){
+                	//alert("NO: "+itemNo+"  ITEM: "+item);
+                    arr_series.data[0].push(parseFloat(item));
+                }
+            });
+            options1.series.push(arr_series);
+        }
+        }
+        );
+    }
+    catch(err){
+    	alert(err.message);
+    }
+
+    // Give the points a 3D feel by adding a radial gradient
+    Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function (color) {
+        return {
+            radialGradient: {
+                cx: 0.4,
+                cy: 0.3,
+                r: 0.5
+            },
+            stops: [
+                [0, color],
+                [1, Highcharts.Color(color).brighten(-0.2).get('rgb')]
+            ]
+        };
+    });
+
+    // Set up the chart
+    var chart = new Highcharts.Chart(options1);
+
+
+    // Add mouse events for rotation
+    $(chart.container).bind('mousedown.hc touchstart.hc', function (e) {
+        e = chart.pointer.normalize(e);
+
+        var posX = e.pageX,
+            posY = e.pageY,
+            alpha = chart.options.chart.options3d.alpha,
+            beta = chart.options.chart.options3d.beta,
+            newAlpha,
+            newBeta,
+            sensitivity = 2; // lower is more sensitive
+
+        $(document).bind({
+            'mousemove.hc touchdrag.hc': function (e) {
+                // Run beta
+                newBeta = beta + (posX - e.pageX) / sensitivity;
+                newBeta = Math.min(100, Math.max(-100, newBeta));
+                chart.options.chart.options3d.beta = newBeta;
+
+                // Run alpha
+                newAlpha = alpha + (e.pageY - posY) / sensitivity;
+                newAlpha = Math.min(100, Math.max(-100, newAlpha));
+                chart.options.chart.options3d.alpha = newAlpha;
+
+                chart.redraw(false);
+            },
+            'mouseup touchend': function () {
+                $(document).unbind('.hc');
+            }
+        });
+    });
+}, "text"); 
+});
+});
+		</script>
+<!-- ==================  scatter chart end================================================= -->
+
+<!--==================  3D bar chart begin-=================================================--->
+<script type="text/javascript">
+		$(document).ready(function(){
+$("img.3dBarImg").click(function(){
+
+document.getElementById("sliders").style.display = "initial";
+
+		var options1 = {
+		 mapNavigation: {
+                enabled: true,
+                enableDoubleClickZoomTo: true
+            },
+        chart: {
+        	zoomType: 'x',
+            renderTo: 'container',
+            type: 'column',
+            margin: 75,
+            options3d: {
+                enabled: true,
+                alpha: 15,
+                beta: 15,
+                depth: 50,
+                viewDistance: 25
+            }
+        },
+        title: {
+            text: 'Statewise Vegetables Intake of India'
+        },
+        subtitle: {
+            text: 'Rotate by dragging the sliders below'
+        },
+        plotOptions: {
+            column: {
+                depth: 25
+            }
+        },
+        xAxis: {
+		    type: 'category',
+		    labels: {
+		        rotation: -20,
+		        style: {
+		            fontSize: '11px',
+		            fontFamily: 'Verdana, sans-serif'
+		        }
+		    },
+		    categories: []
+        },
+        
+        series: []
+        //series: [{data: [29.9, 71.5, 106.4, 129.2, 144.0]}, {data: [176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]}]
+    };
+    
+$.get('sample_2_tr.csv', function(data) {
+	//alert(data.toString());
+	
+	try{
+	 var lines = data.toString().split('\n');
+	 //alert(lines.toString());
+	 }
+	 catch(err){
+	 alert(err.message);
+	 }
+
+    try{
+    
+    $.each(lines, function(lineNo, line) {
+        var items = line.split(',');
+      
+        if (lineNo === 0) {
+           $.each(items, function(itemNo, item) {
+                if (itemNo > 0) options1.xAxis.categories.push(item);
+            });
+        }
+        else {
+           var series = {data:[]};
+            $.each(items, function(itemNo, item) {
+		            if (itemNo === 0) {
+		                series.name = item;
+		            } else {
+		                series.data.push(parseFloat(item));
+		            }
+            });
+            options1.series.push(series);
+        }
+        }
+        );
+       
+    }
+    catch(err){
+    	alert(err.message);
+    }
+    var chart = new Highcharts.Chart(options1);
+  
+    function showValues() {
+        $('#R0-value').html(chart.options.chart.options3d.alpha);
+        $('#R1-value').html(chart.options.chart.options3d.beta);
+    }
+
+    // Activate the sliders
+    $('#R0').on('change', function () {
+        chart.options.chart.options3d.alpha = this.value;
+        showValues();
+        chart.redraw(false);
+    });
+    $('#R1').on('change', function () {
+        chart.options.chart.options3d.beta = this.value;
+        showValues();
+        chart.redraw(false);
+    });
+
+    showValues();
+}, "text");
+});
+});
+	</script>
+<!--==================  3D bar chart end -=================================================--->
+
+<!--====================Area Chart Begin  -=================================================--->
+
+<script type="text/javascript">
+		
+$(document).ready(function(){
+$("img.AreaImg").click(function(){
+
+document.getElementById("sliders").style.display = "none";
+		var options1 = {
+        chart: {
+        zoomType: 'y',
+            type: 'area'
+        },
+        title: {
+            text: 'State wise Vegetables Intake in India'
+        },
+        subtitle: {
+            text: 'Drag to Zoom'
+        },
+        xAxis: {
+            allowDecimals: true,
+            categories: []
+        },
+        yAxis: {
+            title: {
+                text: 'Intake'
+            }
+        },
+        tooltip: {
+            pointFormat: '{series.name} <b>{point.y:,.0f}%</b><br/>'
+        },
+        plotOptions: {
+            area: {
+                marker: {
+                    enabled: false,
+                    symbol: 'circle',
+                    radius: 2,
+                    states: {
+                        hover: {
+                            enabled: true
+                        }
+                    }
+                }
+            }
+        },
+        series: []
+    };
+		
+$.get('sample_2_tr.csv', function(data) {
+
+try{
+	 var lines = data.toString().split('\n');
+	 //alert(lines.toString());
+	 }
+	 catch(err){
+	 alert(err.message);
+	 }
+
+    try{
+    
+    
+    $.each(lines, function(lineNo, line) { 
+        var items = line.split(',');     
+        if (lineNo === 0) {
+           $.each(items, function(itemNo, item) {
+                if (itemNo > 0) options1.xAxis.categories.push(item);
+            });
+        }
+        else {
+           var arr_series = {name:'', data: []};
+            $.each(items, function(itemNo, item) {
+                if (itemNo === 0) {
+                    arr_series.name=item;
+                } else if(itemNo <= 17){
+                    arr_series.data.push(parseFloat(item));
+                }
+            });
+            options1.series.push(arr_series);
+        }
+        }
+        );
+    }
+    catch(err){
+    	alert(err.message);
+    }
+    $('#container').highcharts(options1);
+}, "text");
+});
+});
+		</script>
+
+
+<!--=====================Area Chart End  -===================================================--->
+
+<!-- =================== column chart  begin================================================= -->
+<script type="text/javascript">
+		
+$(document).ready(function(){
+$("img.ColumnImg").click(function(){
+
+document.getElementById("sliders").style.display = "none";
+		var options1 = {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'State Wise Vegetable Intake in India'
+        },
+        subtitle: {
+            text: 'Source: Data.gov.in'
+        },
+        xAxis: {
+            categories: ["Daily","Weekly","Monthly","Never"]
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Intake'
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
+        },
+        series: []
+    };
+$.get('sample_2.csv', function(data) {
+
+try{
+	 var lines = data.toString().split('\n');
+	 //alert(lines.toString());
+	 }
+	 catch(err){
+	 alert(err.message);
+	 }
+
+    try{
+    
+    
+    $.each(lines, function(lineNo, line) { 
+        var items = line.split(',');     
+        if (lineNo === 0) {
+           /*$.each(items, function(itemNo, item) {
+                if (itemNo > 0) options1.xAxis.categories.push(item);
+            });*/
+        }
+        else {
+           var arr_series = {name:'', data: []};
+            $.each(items, function(itemNo, item) {
+                if (itemNo === 0) {
+                    arr_series.name=item;
+                } else if(itemNo <= 4){
+                    arr_series.data.push(parseFloat(item));
+                }
+            });
+            options1.series.push(arr_series);
+        }
+        }
+        );
+    }
+    catch(err){
+    	alert(err.message);
+    }
+    $('#container').highcharts(options1);
+}, "text");
+});
+});
+		</script>
+<!-- ===================column chart end================================================= -->
+
+<!-- ===================Line chart  begin================================================= -->
+<script type="text/javascript">
+		
+$(document).ready(function(){
+$("img.LineImg").click(function(){
+
+document.getElementById("sliders").style.display = "none";
+		var options1 = {
+		chart: {
+        	zoomType: 'y'
+        	},
+        title: {
+            text: 'State Wise Vegetables Intake of India'
+        },
+        subtitle: {
+            text: 'Drag to Zoom In'
+        },
+        xAxis: {
+            categories: ["Daily","Weekly","Monthly","Never"]
+        },
+        yAxis: {
+            title: {
+                text: 'Intake(%)'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            valueSuffix: '°C'
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+        series: []
+    };
+$.get('sample_2.csv', function(data) {
+
+try{
+	 var lines = data.toString().split('\n');
+	 //alert(lines.toString());
+	 }
+	 catch(err){
+	 alert(err.message);
+	 }
+
+    try{
+    
+    
+    $.each(lines, function(lineNo, line) { 
+        var items = line.split(',');     
+        if (lineNo === 0) {
+           /*$.each(items, function(itemNo, item) {
+                if (itemNo > 0) options1.xAxis.categories.push(item);
+            });*/
+        }
+        else {
+           var arr_series = {name:'', data: []};
+            $.each(items, function(itemNo, item) {
+                if (itemNo === 0) {
+                    arr_series.name=item;
+                } else if(itemNo <= 4){
+                    arr_series.data.push(parseFloat(item));
+                }
+            });
+            options1.series.push(arr_series);
+        }
+        }
+        );
+    }
+    catch(err){
+    	alert(err.message);
+    }
+    $('#container').highcharts(options1);
+}, "text");
+});
+});
+		</script>
+
+<!-- ===================PIE  chart  begin======================================= -->
+<script type="text/javascript">
+
+$(document).ready(function(){
+$("img.PieImg").click(function(){
+
+document.getElementById("sliders").style.display = "none";
+		var options1 ={
+        chart: {
+            type: 'pie',
+            options3d: {
+                enabled: false,
+                alpha: 45,
+                beta: 0
+            }
+        },
+        title: {
+            text: 'State Wise Vegetables Intake in India'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                depth: 35,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.name}'
+                }
+            }
+        },
+        series: [{
+            type: 'pie',
+            name: 'Daily Veg Intake(%)',
+            data: []
+        }]
+       // series: [{data: [['Firefox',45.0], ['IE',26.8]]}]
+    };
+    
+    
+$.get('sample_2.csv', function(data) {
+	try{
+	 var lines = data.toString().split('\n');
+	 //alert(lines.toString());
+	 }
+	 catch(err){
+	 alert(err.message);
+	 }
+
+    try{
+    
+    $.each(lines, function(lineNo, line) { 
+        var items = line.split(',');     
+        if (lineNo === 0) {
+           /*$.each(items, function(itemNo, item) {
+                if (itemNo > 0) options1.xAxis.categories.push(item);
+            });*/
+        }
+        else {
+           var arr_series = [];
+            $.each(items, function(itemNo, item) {
+                if (itemNo === 0) {
+                    arr_series.push(item);
+                } else if(itemNo === 1){
+                    arr_series.push(parseFloat(item));
+                }
+            });
+            options1.series[0].data.push(arr_series);
+        }
+        }
+        );
+    }
+    catch(err){
+    	alert(err.message);
+    }
+    $('#container').highcharts(options1);
+  
+}, "text");
+});
+});
+	
+		</script>
+<!-- ===================PIE  chart  end======================================= -->
+
+
+<!-- ===================3D PIE  chart  begin ======================================= -->
+<script type="text/javascript">
+$(document).ready(function(){
+$("img.3dPieImg").click(function(){
+
+document.getElementById("sliders").style.display = "none";
+		var options1 ={
+        chart: {
+            type: 'pie',
+            options3d: {
+                enabled: true,
+                alpha: 60,
+                beta: 0
+            }
+        },
+        title: {
+            text: 'State Wise Vegetables Intake in India'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                depth: 35,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.name}'
+                }
+            }
+        },
+        series: [{
+            type: 'pie',
+            name: 'Daily Veg Intake(%)',
+            data: []
+        }]
+       // series: [{data: [['Firefox',45.0], ['IE',26.8]]}]
+    };
+    
+    
+$.get('sample_2.csv', function(data) {
+	try{
+	 var lines = data.toString().split('\n');
+	 //alert(lines.toString());
+	 }
+	 catch(err){
+	 alert(err.message);
+	 }
+
+    try{
+    
+    
+    $.each(lines, function(lineNo, line) { 
+        var items = line.split(',');     
+        if (lineNo === 0) {
+           /*$.each(items, function(itemNo, item) {
+                if (itemNo > 0) options1.xAxis.categories.push(item);
+            });*/
+        }
+        else {
+           var arr_series = [];
+            $.each(items, function(itemNo, item) {
+                if (itemNo === 0) {
+                    arr_series.push(item);
+                } else if(itemNo === 1){
+                    arr_series.push(parseFloat(item));
+                }
+            });
+            options1.series[0].data.push(arr_series);
+        }
+        }
+        );
+    }
+    catch(err){
+    	alert(err.message);
+    }
+    $('#container').highcharts(options1);
+  
+}, "text");
+});
+});
+		</script>
+<!-- ===================3D PIE  chart  end======================================= -->
+
+
+<!-- ===================DONUT   chart  begin ======================================= -->
+<script type="text/javascript">
+		
+$(document).ready(function(){
+$("img.DonutPieImg").click(function(){
+
+document.getElementById("sliders").style.display = "none";
+		var options1 ={
+        chart: {
+            type: 'pie',
+            options3d: {
+                enabled: true,
+                alpha: 60,
+            }
+        },
+        title: {
+            text: 'State Wise Vegetables Intake in India'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                innerSize: 100,
+                depth: 45
+            }
+        },
+        series: [{
+            type: 'pie',
+            name: 'Daily Veg Intake(%)',
+            data: []
+        }]
+       // series: [{data: [['Firefox',45.0], ['IE',26.8]]}]
+    };
+    
+    
+$.get('sample_2.csv', function(data) {
+	try{
+	 var lines = data.toString().split('\n');
+	 //alert(lines.toString());
+	 }
+	 catch(err){
+	 alert(err.message);
+	 }
+
+    try{
+    
+    
+    $.each(lines, function(lineNo, line) { 
+        var items = line.split(',');     
+        if (lineNo === 0) {
+           /*$.each(items, function(itemNo, item) {
+                if (itemNo > 0) options1.xAxis.categories.push(item);
+            });*/
+        }
+        else {
+           var arr_series = [];
+            $.each(items, function(itemNo, item) {
+                if (itemNo === 0) {
+                    arr_series.push(item);
+                } else if(itemNo === 1){
+                    arr_series.push(parseFloat(item));
+                }
+            });
+            options1.series[0].data.push(arr_series);
+        }
+        }
+        );
+    }
+    catch(err){
+    	alert(err.message);
+    }
+    $('#container').highcharts(options1);
+  
+}, "text");
+});
+});
+	
+		</script>
+<!-- ===================DONUT  chart  end======================================= -->
+
+
+<!-- ===================SEMI PIE  chart  begin======================================= -->
+<script type="text/javascript">
+	$(document).ready(function(){
+$("img.SemiPieImg").click(function(){
+
+document.getElementById("sliders").style.display = "none";
+		var options1 ={
+        chart: {
+            type: 'pie',
+            options3d: {
+                enabled: false,
+                alpha: 45,
+                beta: 0
+            }
+        },
+        title: {
+            text: 'State Wise Vegetables Intake in India'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+       plotOptions: {
+            pie: {
+                dataLabels: {
+                    enabled: true,
+                    distance: -50,
+                    style: {
+                        fontWeight: 'bold',
+                        color: 'white',
+                        textShadow: '0px 1px 2px black'
+                    }
+                },
+                startAngle: -90,
+                endAngle: 90,
+                center: ['50%', '75%']
+            }
+        },
+        series: [{
+            type: 'pie',
+            name: 'Daily Veg Intake(%)',
+            innerSize: '50%',
+            data: []
+        }]
+       // series: [{data: [['Firefox',45.0], ['IE',26.8]]}]
+    };
+    
+    
+$.get('sample_2.csv', function(data) {
+	try{
+	 var lines = data.toString().split('\n');
+	 //alert(lines.toString());
+	 }
+	 catch(err){
+	 alert(err.message);
+	 }
+
+    try{
+    
+    $.each(lines, function(lineNo, line) { 
+        var items = line.split(',');     
+        if (lineNo === 0) {
+           /*$.each(items, function(itemNo, item) {
+                if (itemNo > 0) options1.xAxis.categories.push(item);
+            });*/
+        }
+        else {
+           var arr_series = [];
+            $.each(items, function(itemNo, item) {
+                if (itemNo === 0) {
+                    arr_series.push(item);
+                } else if(itemNo === 1){
+                    arr_series.push(parseFloat(item));
+                }
+            });
+            options1.series[0].data.push(arr_series);
+        }
+        }
+        );
+    }
+    catch(err){
+    	alert(err.message);
+    }
+    $('#container').highcharts(options1);
+  
+}, "text");
+});
+});
+	
+		</script>
+<!-- ===================SEMI PIE   chart  end======================================= -->
+
+
+<!-- ===================Polar SPIDER chart begin ======================================= -->
+<script type="text/javascript">
+ $(document).ready(function(){
+$("img.PolarSpiderImg").click(function(){
+
+document.getElementById("sliders").style.display = "none";
+		var options1 = {
+        chart: {
+            polar: true,
+            type: 'line'
+        },
+
+        title: {
+            text: 'State wise Vegetable Intake of India(%)',
+            x: -10
+        },
+
+        pane: {
+            size: '95%'
+        },
+
+        xAxis: {
+            categories: ['Daily', 'Weekly', 'Monthly', 'Never'],
+            tickmarkPlacement: 'off',
+            lineWidth: 0
+        },
+
+        yAxis: {
+            gridLineInterpolation: 'polygon',
+            lineWidth: 0,
+            min: 0
+        },
+
+        tooltip: {
+            shared: true,
+            pointFormat: '<span style="color:{series.color}">{series.name}: <b>{point.y:,.0f}</b><br/>'
+        },
+
+        legend: {
+            align: 'right',
+            verticalAlign: 'top',
+            y: 70,
+            layout: 'vertical'
+        },
+
+        series: []
+    };
+		
+$.get('sample_2.csv', function(data) {
+	try{
+	 var lines = data.toString().split('\n');
+	 //alert(lines.toString());
+	 }
+	 catch(err){
+	 alert(err.message);
+	 }
+
+    try{
+    
+    
+    $.each(lines, function(lineNo, line) { 
+        var items = line.split(',');     
+        if (lineNo === 0) {
+           /*$.each(items, function(itemNo, item) {
+                if (itemNo > 0) options1.xAxis.categories.push(item);
+            });*/
+        }
+        else {
+           var arr_series = {name:'', data:[], pointPlacement: 'on'};
+            $.each(items, function(itemNo, item) {
+                if (itemNo === 0) {
+                    arr_series.name=item;
+                } else if(itemNo <= 4){
+                    arr_series.data.push(parseFloat(item));
+                }
+            });
+            options1.series.push(arr_series);
+        }
+        }
+        );
+    }
+    catch(err){
+    	alert(err.message);
+    }
+    $('#container').highcharts(options1);
+  
+}, "text");
+});
+});
+		</script>
+<!-- ===================Polar SPIDER  chart  end======================================= -->
+
+<!--==================  GEO India chart begin-=================================================--->
+
+ <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+   
+    function drawGeoGDP() {
+    document.getElementById("sliders").style.display = "none";
+        var request = new XMLHttpRequest();
+        request.open("GET", "sampleData_5.json", false);
+        request.send(null);
+        var servers = JSON.parse(request.responseText);
+       
+       var data = google.visualization.arrayToDataTable(servers.data);  
+
+      var options = {
+        title: 'StateWise Vegetable consumption in India',
+        region: 'IN',
+        displayMode: 'regions',
+        resolution:'provinces',
+        colorAxis: {colors: ['yellow', 'blue']}
+      };
+
+      var chart = new google.visualization.GeoChart(document.getElementById('container'));
+      chart.draw(data, options);
+    };
+    </script>
+
+<!--====================  GEO India chart end =============================================-->
+
+
+<!--==================  GEO MP chart begin-=================================================--->
+
+<script type="text/javascript">
+    function drawGeoGDPDist() {
+    try{
+    document.getElementById("sliders").style.display = "none";
+        var request = new XMLHttpRequest();
+        request.open("GET", "sampleData_4.json", false);
+        request.send(null);
+        var servers = JSON.parse(request.responseText);
+        var xHeader=[];
+        var xName=servers.fields[0].label;
+        var yName="In Lakh Rupees";
+        var no_xElements=0;
+        for(var i=0; i<servers.fields.length; i++){
+            xHeader.push(servers.fields[i].label.split("\n")[0]);
+            no_xElements++;
+        }
+        
+        var res = '';
+        var op = new Array(servers.data.length);
+        for(var i = 0; i < servers.data.length; i++){
+            op[i] = new Array(3);
+            for(var j = 0; j < 3; j++){
+                if(i===0){
+                    op[i][j] = xHeader[j];
+                   
+                }
+                else{
+                    if(j===0){
+                        op[i][j] = servers.data[i][j];
+                    }
+                    else{
+                        op[i][j] = parseFloat(servers.data[i][j]);
+                    }
+                    //op[i].push(servers.data[i][j+1]);
+                }
+                res = res + "  " +op[i][j];
+            }
+            res = res+"</br>";
+        }
+       //document.getElementById("para").innerHTML=res;
+       
+       var data = google.visualization.arrayToDataTable(op);        
+        //var data = google.visualization.arrayToDataTable(servers.data);        
+       
+        var options = {
+        title: 'GDP of States MP',
+        region: 'IN',
+        displayMode: 'markers',
+        resolution:'provinces',
+        colorAxis: {colors: ['yellow', 'blue']}
+      };
+
+      var chart = new google.visualization.GeoChart(document.getElementById('container'));
+      chart.draw(data, options);
+  }
+      catch(err){
+          alert(err.message);
+      }
+    }
+    </script>
+
+
+<!--==================  GEO MP chart end-=================================================--->
+
+<!-- ===================scripts  for various  charts  end  ================================================= -->
+</head>
+
+<body data-spy="scroll" data-target="#nav-wrap">
+
+
+   <!-- Header
+   ================================================== -->
+   <header class="mobile">
+
+      <div class="row">
+
+         <div class="col full">
+
+            <div class="logo" style="font-size : 15px;">
+               <a href="#"><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Data Visualization</p></a>
+            </div>
+
+            <nav id="nav-wrap">
+
+               <a class="mobile-btn" href="#nav-wrap" title="Show navigation">Show navigation</a>
+	            <a class="mobile-btn" href="#" title="Hide navigation">Hide navigation</a>
+
+               <ul id="nav" class="nav">
+	               <li><a href="#intro">Home</a></li>
+	               <li><a href="#services">Description</a></li>
+	               <li><a href="#portfolio">Demo</a></li>
+                  <li><a href="#about">About Us</a></li>
+                  <li><a href="#contact">Contact</a></li>
+               </ul>
+
+            </nav>
+
+         </div>
+
+      </div>
+
+   </header> <!-- Header End -->
+
+
+   <!-- Intro Section
+   ================================================== -->
+   <section id="intro">
+
+      <!-- Flexslider Start-->
+	   <div id="intro-slider" class="flexslider">
+
+		   <ul class="slides">
+
+			   <!-- Slide -->
+			   <li>
+				   <div class="row">
+					   <div class="col full">
+						   <div class="slider-text">
+							   <h2><q style="font-size : 85px">Data</q>
+							   <br><q style="font-size : 105px"><a href=""><span>Visualization</span></a></q></h2>
+ 							 <p>Visualizations help people see things that were not obvious to them before. Even when data volumes are very large, patterns can be spotted quickly and easily. Visualizations convey information in a universal manner and make it simple to share ideas with others. It lets people ask others, “Do you see what I see?” And it can even answer questions like “What would happen if we made an adjustment to that area?”</p>
+						   </div>
+					   </div>
+					  
+				   </div>
+			   </li>
+
+            <!-- Slide -->
+			   <li>
+				   <div class="row">
+					   <div class="col full">
+						   <div class="slider-text">
+							   <h2><a href="#portfolio">Data visualization</a> is the method of consolidating data into one collective, illustrative  <a href="#contact" title="">graphic.</a></h2>
+							   
+						   </div>
+					   </div>
+				   </div>
+			   </li>
+
+
+            <!-- Slide -->
+			   <li>
+				   <div class="row">
+					   <div class="col full">
+						   <div class="slider-text">
+							   <h2>Open Government Data <a href="http://data.gov.in/" title="">data.gov.in</a>  is a platform for supporting Open Data initiative of Government of India</h2>
+							   <p> to publish datasets, documents, services, tools and applications collected by them for public use</p>
+						   </div>
+					   </div>
+				   </div>
+			   </li>
+
+		   </ul>
+	   </div>
+	   <!-- Flexslider End-->
+
+   </section> <!-- Intro Section End-->
+
+
+   <!-- Services Section
+   ================================================== -->
+   <section id="services">
+
+      <div class="row section-head">
+
+         <div class="col one-third">
+            <h2>Graph Visualization</h2>
+            <p class="desc">Our list of Graph Visualization.</p>
+         </div>
+
+         <div class="col two-thirds">
+            <div class="intro">
+             <p>Data visualization is both an art and a science.
+             <br>
+             "Main goal of data visualization is to communicate information clearly and effectively through graphical means, i.e GRAPHS and CHARTS. To convey ideas effectively, visualization helps users in analyzing and reasoning about data. It makes complex data more accessible, understandable and usable. Users may have particular analytical tasks, such as making comparisons or understanding causality, and the design principle of the graphic charts of various types are used to show patterns or relationships in the data for one or more variables."
+              </p>
+            </div>
+         </div>
+
+      </div>
+
+      <div class="row">
+
+         <div class="services-wrapper">
+
+            <div class="col">
+               <h2><i class="icon-desktop"></i>Line Chart</h2>
+               <p>The line chart is represented by a series of datapoints connected with a straight line. Line charts are most often used to visualize data that changes over time.</p>
+            </div>
+
+            <div class="col">
+               <h2><i class="icon-star"></i>Area Chart</h2>
+               <p>The area chart functions the same way as a line chart only it fills the area between the line and the threshold, which is 0 by default.</p>
+            </div>
+
+            <div class="col m-first">
+               <h2><i class="icon-camera"></i>Column & Bar Chart</h2>
+               <p>A column chart displays data as vertical bars.
+               The bar chart is exactly the same as a column chart only the x-axis and y-axis are switched.</p>
+            </div>
+
+            <div class="col first">
+               <h2><i class="icon-globe"></i>Pie Chart</h2>
+               <p>A pie chart is a circular chart divided into sectors which is proportional to the quantity it represents.</p>
+            </div>
+
+            <div class="col m-first">
+               <h2><i class=" icon-list-alt"></i>Scatter Chart</h2>
+               <p>A scatter chart draw a single point for each point of data in a series without connecting them.
+               </p>
+            </div>
+
+            <div class="col">
+               <h2><i class="icon-print"></i>More Categories</h2>
+               <p>Includes Bubble charts, 3D-plots, Spider Web etc. However, we focused more on first five categories.</p>
+            </div>
+
+         </div> <!-- Services-Wrapper End -->
+
+      </div> <!--end row -->
+
+   </section> <!-- Services Section End -->
+
+
+   <!-- Portfolio Section
+   ================================================== -->
+   <section id="portfolio">
+
+      <div class="row section-head">
+         <div class="col full">
+
+            <h2>Demo</h2>
+            <p class="desc">Check out our Visualizations.</p>
+
+            <p class="intro"></p>
+
+         </div>
+      </div>
+
+      <div class="row">
+
+		   <!-- Portfolio Wrapper -->
+		   <div id="portfolio-wrapper">
+
+	    <div class="col portfolio-item">
+               <div class="item-wrap">
+					  
+					<a href="#" data-reveal-id="modal-01"><img class="ScatterImg" src="images/portfolio/scatter_thumb.png" alt=""/></a>
+					   <div class="portfolio-item-meta">
+						   <h5><a href="#">Scatter Chart</a></h5>
+					   </div>
+               </div>
+	    </div>
+
+  	    <div class="col portfolio-item">
+               <div class="item-wrap">
+					  
+					<a href="#" data-reveal-id="modal-01"><img class="3dBarImg" src="images/portfolio/3dbar.png" alt=""/></a>
+					   <div class="portfolio-item-meta">
+						   <h5><a href="#">3D Bar Graph</a></h5>
+					   </div>
+               </div>
+	    </div>
+		
+            <div class="col portfolio-item">
+               <div class="item-wrap">
+
+					   <a href="#" data-reveal-id="modal-01"><img class="AreaImg" src="images/portfolio/area.png" alt=""/></a>
+					   <div class="portfolio-item-meta">
+						   <h5><a href="#">Area Chart</a></h5>
+					   </div>
+               </div>
+	    </div>
+		
+            <div class="col portfolio-item">
+               <div class="item-wrap">
+					   <a href="#" data-reveal-id="modal-01"><img class="ColumnImg" src="images/portfolio/column.png" alt=""/></a>
+					   <div class="portfolio-item-meta">
+						   <h5><a href="#">Column Chart</a></h5>
+					   </div>
+               </div>
+			   </div>
+
+            <div class="col portfolio-item">
+               <div class="item-wrap">
+					   <a href="#" data-reveal-id="modal-01"><img class="LineImg" src="images/portfolio/line.png" alt=""/></a>
+					   <div class="portfolio-item-meta">
+						   <h5><a href="#">Line Chart</a></h5>
+					   </div>
+               </div>
+			   </div>
+
+            <div class="col portfolio-item">
+               <div class="item-wrap">
+					   <a href="#" data-reveal-id="modal-01"><img class="PieImg" src="images/portfolio/pie.png" alt=""/></a>
+					   <div class="portfolio-item-meta">
+						   <h5><a href="#">Pie Chart</a></h5>
+					   </div>
+               </div>
+			   </div>
+
+            <div class="col portfolio-item">
+               <div class="item-wrap">
+					   <a href="#" data-reveal-id="modal-01"><img class="3dPieImg" src="images/portfolio/3dpie.png" alt=""/></a>
+					   <div class="portfolio-item-meta">
+						   <h5><a href="#">3D Pie Chart</a></h5>
+					   </div>
+               </div>
+			   </div>
+
+
+	    <div class="col portfolio-item">
+               <div class="item-wrap">
+					   <a href="#" data-reveal-id="modal-01"><img class="DonutPieImg" src="images/portfolio/donut.png" alt=""/></a>
+					   <div class="portfolio-item-meta">
+						   <h5><a href="#">Donut Pie Chart</a></h5>
+					   </div>
+               </div>
+			   </div>
+
+ 	    <div class="col portfolio-item">
+               <div class="item-wrap">
+					   <a href="#" data-reveal-id="modal-01"><img class="SemiPieImg" src="images/portfolio/semipie_1.jpg" alt=""/></a>
+					   <div class="portfolio-item-meta">
+						   <h5><a href="#">Semi Pie Chart</a></h5>
+					   </div>
+               </div>
+			   </div>
+
+
+            <div class="col portfolio-item">
+               <div class="item-wrap">
+					   <a href="#" data-reveal-id="modal-01"><img class="PolarSpiderImg" src="images/portfolio/spider.png" alt=""/></a>
+					   <div class="portfolio-item-meta">
+						   <h5><a href="#">Polar Spider Chart</a></h5>
+					   </div>
+               </div>
+			   </div>
+
+
+            <div class="col portfolio-item">
+               <div class="item-wrap">
+					   <a href="#" data-reveal-id="modal-01"><img class="GeoIndiaImg" onclick="javascript:drawGeoGDP()" src="images/portfolio/geoindia_1.jpg" alt="GeoIndiaImg"/></a>
+					   <div class="portfolio-item-meta">
+						   <h5><a href="#">Geo India Chart</a></h5>
+					   </div>
+               </div>
+			   </div>
+
+ <div class="col portfolio-item">
+               <div class="item-wrap">
+					   <a href="#" data-reveal-id="modal-01"><img class="GeoMpImg" onclick="javascript:drawGeoGDPDist()"  src="images/portfolio/geomp_1.jpg" alt="GeoMpImg"/></a>
+					   <div class="portfolio-item-meta">
+						   <h5><a href="#">Geo MP Chart</a></h5>
+					   </div>
+               </div>
+			   </div>
+
+
+		   </div> <!-- Portfolio Wrapper End -->
+
+
+		</div> <!-- End Row -->
+
+
+      <!-- Modal Popup
+	   =========================================================== -->
+
+      <!-- modal-01 -->
+	   <div id="modal-01" class="reveal-modal">
+
+		   <div id="container" style="min-width: 600px; max-width: 800px; height: 500px; margin: 0 auto"></div>
+		   
+		   <div id="sliders">
+	<table>
+		<tr><td>Rotate vertical</td><td><input id="R0" type="range" min="0" max="45" value="15"/> <span id="R0-value" class="value"></span></td></tr>
+	    <tr><td>Rotate Horizontal</td><td><input id="R1" type="range" min="0" max="45" value="15"/> <span id="R1-value" class="value"></span></td></tr>
+	</table>
+</div>
+
+	   </div>
+      <!-- modal-01 End -->
+
+    
+   </section> <!-- Portfolio End -->
+
+   
+
+
+   <!-- About Section
+   ================================================== -->
+   <section id="about">
+
+      <div class="row section-head">
+
+         <div class="col one-fourth">
+            <h2>About Us</h2>
+            <p class="desc"></p>
+         </div>
+
+         <div class="col three-fourths">
+             <p class="intro">We Team of 4 guys for data visualization project </p>
+         </div>
+
+      </div>
+
+      <div class="row">
+         <div class="col full"><h3>Our Work Process.</h3></div>
+      </div>
+
+      <div class="row process-wrap">
+
+         <div class="col">
+            <h4>Stage 1: Explore.</h4>
+
+            <p>Compliment to data.gov.in; <br>
+                Take JSON format and plot the charts of different kinds;<br>
+		publish the charts on a site.</p>
+			</div>
+
+         <div class="col">
+            <h4>Stage 2: Design.</h4>
+
+            <p>Initially, we start with matplotlib (a python library). We got charts, but while publishing we cannot gather much information from them, as they were static images. So we have to find some other to solve this visualization problem.
+            </p>
+			</div>
+
+         <div class="col m-first">
+            <h4>Stage 3: Final Design</h4>
+
+            <p>We made our final charts using HIGHCHARTS, as they provide sufficient information to understand the scenario about the situation. Additionaly,
+		these charts provide interactive as per events.</p>
+			</div>
+
+         <div class="col">
+            <h4>Stage 4: Demo</h4>
+
+            <p>We're showing 6 types of graph in our demo.
+            </p>
+			</div>
+
+      </div> <!-- Process Wrap End -->
+
+      <div class="row">
+         <div class="col full"><h3>Meet The Team.</h3></div>
+      </div>
+
+
+      <!-- Team Wrap End -->
+      <div class="row team-wrap">
+
+         <div class="col one-fourth">
+
+            <img src="images/team/vrishank.jpg" alt=""/>
+
+            <div class"member-name">
+               <h5>Vrishank Shete</h5>
+               <span>201305642</span>
+            </div>
+
+            <ul class="member-social">
+               <li><a href="https://www.facebook.com/vrishank.shete"><i class="icon-facebook"></i></a></li>
+               <li><a href="https://twitter.com/vrishankshete"><i class="icon-twitter"></i></a></li>
+               <li><a href="https://plus.google.com/u/0/105836935761944261507/posts"><i class="icon-google-plus-sign"></i></a></li>
+               <li><a href="#"><i class="icon-linkedin"></i></a></li>
+               <li><a href="#"><i class="icon-skype"></i></a></li>
+            </ul>
+
+			</div>
+
+         <div class="col one-fourth">
+
+            <img src="images/team/chetan.jpg" alt=""/>
+
+            <div class"member-name">
+               <h5>Chetan Jain</h5>
+               <span>201305653</span>
+            </div>
+
+            <ul class="member-social">
+               <li><a href="https://www.facebook.com/chetan0018"><i class="icon-facebook"></i></a></li>
+               <li><a href="https://twitter.com/YueeJain"><i class="icon-twitter"></i></a></li>
+               <li><a href="https://plus.google.com/u/0/+ChetanJainAscii/posts"><i class="icon-google-plus-sign"></i></a></li>
+               <li><a href="#"><i class="icon-linkedin"></i></a></li>
+               <li><a href="#"><i class="icon-skype"></i></a></li>
+            </ul>
+
+			</div>
+
+         <div class="col one-fourth">
+
+            <img src="images/team/lokesh.jpg" alt=""/>
+
+            <div class"member-name">
+               <h5>Lokesh Mittal</h5>
+               <span>201305650</span>
+            </div>
+
+            <ul class="member-social">
+               <li><a href="https://www.facebook.com/lokesh.mittal.92"><i class="icon-facebook"></i></a></li>
+               <li><a href="https://twitter.com/lokeshmittal10"><i class="icon-twitter"></i></a></li>
+               <li><a href="https://plus.google.com/u/0/+lokeshmittal10/posts"><i class="icon-google-plus-sign"></i></a></li>
+               <li><a href="#"><i class="icon-linkedin"></i></a></li>
+               <li><a href="#"><i class="icon-skype"></i></a></li>
+            </ul>
+
+			</div>
+
+         <div class="col one-fourth">
+
+            <img src="images/team/anand.jpg" alt=""/>
+
+            <div class"member-name">
+               <h5>Anand Kalburgi</h5>
+               <span>201305648</span>
+            </div>
+
+            <ul class="member-social">
+               <li><a href="https://www.facebook.com/anand.kalburgi.3"><i class="icon-facebook"></i></a></li>
+               <li><a href="https://twitter.com/anandkalburgi"><i class="icon-twitter"></i></a></li>
+               <li><a href="https://plus.google.com/u/0/110148506119837598594/posts "><i class="icon-google-plus-sign"></i></a></li>
+               <li><a href="#"><i class="icon-linkedin"></i></a></li>
+               <li><a href="#"><i class="icon-skype"></i></a></li>
+            </ul>
+
+			</div>
+
+      </div> <!-- Team Wrap End -->
+
+      
+
+   </section> <!-- About Section End-->
+
+   
+
+    <!-- Contact Section
+   ================================================== -->
+   <section id="contact">
+
+      <div class="row section-head">
+         <div class="col full">
+            <h2>Contact Us</h2>
+            <p class="desc">Get in touch with us.</p>
+         </div>
+      </div>
+
+      <div class="row">
+
+         <div class="col g-7">
+
+            <!-- form -->
+            <form name="contactForm" id="contactForm" method="post" action="">
+					<fieldset>
+
+                  <div>
+						   <label for="contactName">Name <span class="required">*</span></label>
+						   <input name="contactName" type="text" id="contactName" size="35" value="" />
+                  </div>
+
+                  <div>
+						   <label for="contactEmail">Email <span class="required">*</span></label>
+						   <input name="contactEmail" type="text" id="contactEmail" size="35" value="" />
+                  </div>
+
+                  <div>
+						   <label for="contactSubject">Subject</label>
+						   <input name="contactSubject" type="text" id="contactSubject" size="35" value="" />
+                  </div>
+
+                  <div>
+                     <label  for="contactMessage">Message <span class="required">*</span></label>
+                     <textarea name="contactMessage"  id="contactMessage" rows="15" cols="50" ></textarea>
+                  </div>
+
+                  <div>
+                     <button class="submit">Submit</button>
+                     <span id="image-loader">
+                        <img src="images/loader.gif" alt="" />
+                     </span>
+                  </div>
+
+					</fieldset>
+				</form> <!-- Form End -->
+
+            <!-- contact-warning -->
+            <div id="message-warning"></div>
+            <!-- contact-success -->
+				<div id="message-success">
+               <i class="icon-ok"></i>Your message was sent, thank you!<br />
+				</div>
+
+         </div>
+
+
+         <aside class="col g-5">
+
+            <h3>Contact Information</h3>
+
+            <p>3<sup>rd</sup> Floor
+            Bakul Nivas<br/>
+            IIIT-Hyderabad
+            </p>
+
+            
+            <br>
+            <h3>Email</h3>
+		<p>
+            Shete Vrishank "vrishank.shete [@] students.iiit.ac.in"
+            <br>Chetan Jain "chetan.jain [@] students.iiit.ac.in"
+            <br>Lokesh Mittal "lokesh.mittal [@] students.iiit.ac.in"
+            <br>Anand Kalburgi "anand.kalburgi [@] students.iiit.ac.in"
+            </p><br />
+
+         </aside>
+
+      </div>
+
+   </section> <!-- Contact Section End-->
+
+   <!-- footer
+   ================================================== -->
+   <footer>
+
+      <div class="row">
+
+         <div class="col g-7">
+            <ul class="copyright">
+               <li>&copy; Data Visulization</li>
+                <li>2014</li>
+               <li>The Course Project in <a href="" title="">Cloud Computing</a></li>               
+            </ul>
+         </div>
+
+      </div>
+
+   </footer> <!-- Footer End-->
+
+   <!-- Java Script
+   ================================================== -->
+   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+   <script>window.jQuery || document.write('<script src="js/jquery-1.10.2.min.js"><\/script>')</script>
+   <script type="text/javascript" src="js/jquery-migrate-1.2.1.min.js"></script>
+
+   <script src="js/scrollspy.js"></script>
+   <script src="js/jquery.flexslider.js"></script>
+   <script src="js/jquery.reveal.js"></script>
+   <script src="http://maps.google.com/maps/api/js?sensor=true" type="text/javascript"></script>
+   <script src="js/gmaps.js"></script>
+   <script src="js/init.js"></script>
+   <script src="js/smoothscrolling.js"></script>
+<script src="js/highcharts.js"></script>
+<script src="js/highcharts-3d.js"></script>
+<script src="js/modules/exporting.js"></script>
+<script src="js/highcharts-more.js"></script>
+
+</body>
+
+</html>
